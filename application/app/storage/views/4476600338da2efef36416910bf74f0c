@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <?php $settings = Setting::first(); ?>
+    <?php if(isset($media->title)): ?>
+      <title><?php echo stripslashes($media->title); ?></title>
+    <?php else: ?>
+      <title><?php echo $settings->website_name; ?> - <?php echo $settings->website_description; ?></title>
+    <?php endif; ?>
+
+    <meta name="viewport" content="initial-scale=1">
+    
+    <link rel="stylesheet" href="<?php echo URL::to('/'); ?>/application/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<?php echo URL::to('/'); ?>/application/assets/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="<?php echo URL::to('/'); ?>/application/assets/css/animate.min.css" />
+    <link rel="stylesheet" href="<?php echo URL::to('/'); ?>/application/assets/css/admin.css" />
+    <?php if($settings->color_scheme == 'dark' || (isset($_GET['color_scheme']) && $_GET['color_scheme'] == 'dark') ): ?>
+      <link rel="stylesheet" href="<?php echo URL::to('/'); ?>/application/assets/css/style-dark.min.css" />
+    <?php endif; ?>
+
+    <link rel="icon" href="<?php echo Config::get('site.uploads_dir') . '/settings/' . $settings->favicon; ?>" type="image/x-icon">
+    <link rel="shortcut icon" href="<?php echo Config::get('site.uploads_dir') . '/settings/' . $settings->favicon; ?>" type="image/x-icon">
+    <?php echo $__env->yieldContent('css'); ?>
+
+    <?php echo $__env->make('includes.custom_css', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+
+    <!--[if lte IE 8]>
+      <script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/respond.min.js"></script>
+    <![endif]-->
+    
+    <script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/masonry.pkgd.min.js"></script>
+    <script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/imagesloaded.pkgd.min.js"></script>
+    <script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/jquery.infinitescroll.min.js"></script>
+    <script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/jquery.sticky.js"></script>
+    <script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/jquery.nearest.min.js"></script>
+    <script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/jquery.fitvid.js"></script>
+    <script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/jquery.timeago.js"></script>
+    <script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/function.js"></script>
+
+    <?php if(isset($media->title) && isset($media->pic_url)): ?>
+      <meta property="og:title" content="<?php echo $media->title; ?>"/>
+      <meta property="og:url" content="<?php echo Request::url(); ?>"/>
+      <meta property="og:image" content="<?php echo Config::get('site.uploads_dir') . '/images/' . $media->pic_url; ?>"/>
+      <meta property="og:type" content="website" />
+
+      <?php if(isset($media->description)): ?>
+        <meta property="og:description" content="<?php echo $media->description; ?>"/>
+      <?php endif; ?>
+
+      <meta itemprop="name" content="<?php echo $media->title; ?>">
+      <meta itemprop="description" content="<?php echo $media->description; ?>">
+      <meta itemprop="image" content="<?php echo Config::get('site.uploads_dir') . '/images/' . $media->pic_url; ?>">
+    <?php endif; ?>
+    <?php call_user_func ( Config::get('site.header')); ?>
+</head>
+<body <?php if($settings->color_scheme == 'dark'): ?>class="dark"<?php endif; ?>>
+
+<nav class="navbar navbar-fixed-top" role="navigation">
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <span class="sr-only"><?php echo Lang::get('lang.toggle_navigation'); ?></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand logo" href="<?php echo URL::to('/'); ?>"><img src="<?php echo Config::get('site.uploads_dir') . '/settings/' . $settings->logo; ?>" style="height:35px; width:auto;" /></a>
+      
+        <div class="mobile-menu-toggle"><i class="fa fa-bars"></i></div>
+
+        <?php echo $__env->make('layouts.mobile-menu', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+
+
+        <ul class="nav navbar-nav navbar-right">
+        <?php if(Auth::guest()): ?>
+        
+        
+            <li class="<?php if(Request::is('signin')): ?> active <?php endif; ?>"><a href="<?php echo URL::to('signin'); ?>"><?php echo Lang::get('lang.sign_in'); ?></a></li>
+            
+            <?php if($settings->user_registration): ?>
+              <li class="<?php if(Request::is('signup')): ?> active <?php endif; ?>"><a href="<?php echo URL::to('signup'); ?>"><?php echo Lang::get('lang.sign_up'); ?></a></li>
+            <?php endif; ?>
+
+        <?php else: ?>
+
+        <?php $user_points = DB::table('points')->where('user_id', '=', Auth::user()->id)->sum('points'); ?>
+
+          <li class="dropdown">
+              <a href="#" class="user-menu dropdown-toggle" data-toggle="dropdown"><b class="caret"></b><div id="user-info"><h4><i class="fa fa-gear"></i> <?php echo Lang::get('lang.settings'); ?></h4></div> </a>
+              <ul class="dropdown-menu">
+                <?php if(Auth::user()->admin): ?>
+                  <li><a href="<?php echo URL::to('admin'); ?>" class="admin_link_mobile"><i class="fa fa-coffee"></i> <?php echo Lang::get('lang.admin'); ?></a></li>
+                <?php endif; ?>
+                <li><a href="<?php echo URL::to('user') . '/' . Auth::user()->username;; ?>"><i class="fa fa-user"></i> <?php echo Lang::get('lang.my_profile'); ?></a></li>
+                <li><a href="<?php echo URL::to('logout'); ?>" id="user_logout_mobile"><i class="fa fa-power-off"></i> <?php echo Lang::get('lang.logout'); ?></a></li>
+              </ul>
+            </li>
+
+        <?php endif; ?>
+            <?php if($settings->user_registration || !Auth::guest()): ?>
+              <li><a href="<?php echo URL::to('upload'); ?>" class="upload-btn"><i class="fa fa-cloud-upload"></i> <?php echo Lang::get('lang.upload'); ?></a></li>
+            <?php endif; ?>
+          </ul>
+
+
+        </div>
+      </div>
+
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse navbar-ex1-collapse">
+      
+      <ul class="nav navbar-nav navbar-left nav-desktop">
+        <!--li><a href="#" id="categories_open"><i class="fa fa-th-list"></i> Categories</a></li-->
+        <li class="<?php if(Request::is('/') || Request::is('category/*')): ?> active <?php endif; ?>"><a href="<?php echo URL::to('/'); ?>"><i class="fa fa-home"></i><span> <?php echo Lang::get('lang.home'); ?></span></a><div class="nav-border-bottom"></div></li>
+         <li class="dropdown <?php if(Request::is('popular/*') || Request::is('popular')): ?> active <?php endif; ?>">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-star"></i><span> <?php echo Lang::get('lang.popular'); ?> </span><b class="caret"></b><div class="nav-border-bottom"></div></a>
+          <ul class="dropdown-menu">
+            <li><a href="<?php echo URL::to('popular/week'); ?>"><?php echo Lang::get('lang.for_the_week'); ?></a></li>
+            <li><a href="<?php echo URL::to('popular/month'); ?>"><?php echo Lang::get('lang.for_the_month'); ?></a></li>
+            <li><a href="<?php echo URL::to('popular/year'); ?>"><?php echo Lang::get('lang.for_the_year'); ?></a></li>
+            <li><a href="<?php echo URL::to('popular'); ?>"><?php echo Lang::get('lang.all_time'); ?></a></li>
+          </ul>
+        </li>
+        
+        <?php $categories = Category::orderBy('order', 'ASC')->get(); ?>
+
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle categories" data-toggle="dropdown"><i class="fa fa-folder-open"></i><span> <?php echo Lang::get('lang.categories'); ?> </span><b class="caret"></b><div class="nav-border-bottom"></div></a>
+            
+            <ul class="dropdown-menu">
+                <li>
+                    <?php foreach ($categories as $category): ?>
+                      <a href="<?php echo URL::to('category') . '/' . strtolower($category->name); ?>"><?php echo $category->name; ?></a>
+                    <?php endforeach; ?>
+                </li>
+              </ul>
+       </li>
+
+       <?php if($settings->pages_in_menu): ?>
+       <li class="dropdown <?php if(Request::is('pages/*') || Request::is('pages')): ?> active <?php endif; ?>">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-file-text"></i> <?php echo $settings->pages_in_menu_text; ?> <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <?php $pages = Page::all(); ?>
+            <?php foreach($pages as $page): ?>
+              <li><a href="<?php echo URL::to('pages') . '/' . $page->url; ?>"><?php echo $page->title; ?></a></li>
+            <?php endforeach; ?>
+          
+          </ul>
+        </li>
+        <?php endif; ?>
+
+      </ul>  
+
+
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="<?php echo URL::to('/random'); ?>" class="random"><i class="fa fa-random"></i></a></li>
+      <?php if($settings->user_registration || !Auth::guest()): ?>
+        <li><a href="<?php echo URL::to('upload'); ?>" class="upload-btn upload-btn-desktop"><i class="fa fa-cloud-upload"></i> <?php echo Lang::get('lang.upload'); ?></a></li>
+      <?php endif; ?>
+
+      <?php if(Auth::guest()): ?>
+      
+      
+          <li class="<?php if(Request::is('signin')): ?> active <?php endif; ?>"><a href="<?php echo URL::to('signin'); ?>" id="login-button-desktop"><?php echo Lang::get('lang.sign_in'); ?></a><div class="nav-border-bottom"></div></li>
+          <?php if($settings->user_registration): ?>
+            <li class="<?php if(Request::is('signup')): ?> active <?php endif; ?>"><a href="<?php echo URL::to('signup'); ?>" id="signup-button-desktop"><?php echo Lang::get('lang.sign_up'); ?></a><div class="nav-border-bottom"></div></li>
+          <?php endif; ?>
+      <?php else: ?>
+
+      <?php $user_points = DB::table('points')->where('user_id', '=', Auth::user()->id)->sum('points'); ?>
+
+        <li class="dropdown">
+            <a href="#" class="user-menu user-menu-desktop dropdown-toggle" data-toggle="dropdown"><img src="<?php echo Config::get('site.uploads_dir'); ?>avatars/<?php echo Auth::user()->avatar; ?>" class="img-circle" /><b class="caret"></b><div id="user-info"><h4><?php if(strlen(Auth::user()->username) > 8): ?><?php echo substr(Auth::user()->username, 0, 8) . '...'; ?><?php else: ?><?php echo Auth::user()->username; ?><?php endif; ?></h4><p><?php echo $user_points; ?> <?php echo Lang::get('lang.points'); ?></p></div> </a>
+            <ul class="dropdown-menu">
+              <?php if(Auth::user()->admin): ?>
+                <li><a href="<?php echo URL::to('admin'); ?>" class="admin_link_desktop"><i class="fa fa-coffee"></i> <?php echo Lang::get('lang.admin'); ?></a></li>
+              <?php endif; ?>
+              <li><a href="<?php echo URL::to('user') . '/' . Auth::user()->username;; ?>" class="user-profile-link-desktop"><i class="fa fa-user"></i> <?php echo Lang::get('lang.my_profile'); ?></a></li>
+              <li><a href="<?php echo URL::to('logout'); ?>" id="user_logout_desktop"><i class="fa fa-power-off"></i> <?php echo Lang::get('lang.logout'); ?></a></li>
+            </ul>
+          </li>
+
+      <?php endif; ?>
+    </ul>
+
+
+
+  </div><!-- /.navbar-collapse -->
+</div><!-- /.container -->
+</nav>
+
+<?php echo $__env->yieldContent('outer-content'); ?>
+
+<div id="main_container">
+
+    <?php echo $__env->yieldContent('content'); ?>
+
+</div>
+
+<div id="footer">
+&copy; <?php echo date('Y') . ' ' . $settings->website_name; ?>
+</div>
+
+<script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/noty/jquery.noty.js"></script>
+<script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/noty/themes/default.js"></script>
+<script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/noty/layouts/top.js"></script>
+<script type="text/javascript" src="<?php echo URL::to('/'); ?>/application/assets/js/nprogress.js"></script>
+
+<script type="text/javascript">
+  $('document').ready(function(){
+
+    NProgress.start();
+
+    <?php if(Session::get('note') != '' && Session::get('note_type') != ''): ?>
+        var n = noty({text: '<?php echo Session::get("note"); ?>', layout: 'top', type: '<?php echo Session::get("note_type"); ?>', template: '<div class="noty_message"><span class="noty_text"></span><div class="noty_close"></div></div>', closeWith: ['button'], timeout:2000 });
+        <?php Session::forget('note');
+              Session::forget('note_type');
+        ?>
+    <?php endif; ?>
+
+    var slide_pos = 1;
+
+    $('#random-right').click(function(){
+      if(slide_pos < 3){
+        $('#random-slider').css('left', parseInt($('#random-slider').css('left')) - parseInt($('.random-container').width()) -28 + 'px') ;
+        slide_pos += 1;
+      }
+    });
+
+    $('#random-left').click(function(){
+      if(slide_pos > 1){
+        $('#random-slider').css('left', parseInt($('#random-slider').css('left')) + parseInt($('.random-container').width()) +28 + 'px') ;
+        slide_pos -= 1;
+      }
+    });
+
+
+  });
+
+
+  $(window).load(function () {
+    NProgress.done();
+  });
+
+  $(window).resize(function(){
+    jquery_sticky_footer();
+  });
+
+
+  $(window).bind("load", function() {    
+    jquery_sticky_footer();
+  });
+
+  function jquery_sticky_footer(){
+    var footer = $("#footer");
+    var pos = footer.position();
+    var height = $(window).height();
+    height = height - pos.top;
+    height = height - footer.outerHeight();
+    if (height > 0) {
+      footer.css({'margin-top' : height+'px'});
+    }
+  }
+
+  /********** Mobile Functionality **********/
+
+  var mobileSafari = '';
+
+  $(document).ready(function(){
+    $('.mobile-menu-toggle').click(function(){
+      $('.mobile-menu').toggle();
+      $('body').toggleClass('mobile-margin').toggleClass('body-relative');
+      $('.navbar').toggleClass('mobile-margin');
+    });
+
+
+    // Assign a variable for the application being used
+    var nVer = navigator.appVersion;
+    // Assign a variable for the device being used
+    var nAgt = navigator.userAgent;
+    var nameOffset,verOffset,ix;
+   
+   
+    // First check to see if the platform is an iPhone or iPod
+    if(navigator.platform == 'iPhone' || navigator.platform == 'iPod'){
+      // In Safari, the true version is after "Safari" 
+      if ((verOffset=nAgt.indexOf('Safari'))!=-1) {
+        // Set a variable to use later
+        mobileSafari = 'Safari';
+      }
+    }
+   
+    // If is mobile Safari set window height +60
+    if (mobileSafari == 'Safari') { 
+      // Height + 60px
+      $('.mobile-menu').css('height', (parseInt($(window).height())+ 60) + 'px' );
+    } else {
+      // Else use the default window height
+      $('.mobile-menu').css('height', $(window).height()); 
+    };
+
+  });
+
+  $(window).resize(function(){
+    // If is mobile Safari set window height +60
+    if (mobileSafari == 'Safari') { 
+      // Height + 60px
+      $('.mobile-menu').css('height', (parseInt($(window).height())+ 60) + 'px' );
+    } else {
+      // Else use the default window height
+      $('.mobile-menu').css('height', $(window).height()); 
+    };
+  });
+
+  /********** End Mobile Functionality **********/
+
+
+</script>
+
+<?php echo $__env->yieldContent('javascript'); ?>
+
+
+<?php if(isset($settings->analytics)): ?>
+  <?php echo $settings->analytics; ?>
+<?php endif; ?>
+
+
+<?php //call_user_func ( Config::get('site.footer')); ?>
+
+</body>
+</html>

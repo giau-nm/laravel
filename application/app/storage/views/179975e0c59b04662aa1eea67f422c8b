@@ -1,0 +1,101 @@
+
+<?php $__env->startSection('css'); ?>
+    <link rel="stylesheet" href="<?php echo URL::to('/'); ?>/application/assets/js/tagsinput/jquery.tagsinput.css" />
+    <link rel="stylesheet" href="<?php echo URL::to('/'); ?>/application/assets/js/jquery-minicolors/jquery.minicolors.css" />
+    <link rel="stylesheet" href="<?php echo URL::to('/'); ?>/application/assets/css/admin.css" />
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('outer-content'); ?>
+
+	<h2 class="subheader">
+		<div class="container">
+			<i class="fa fa-coffee"></i> <?php echo Lang::get('lang.admin_functionality'); ?></h2>
+		</div>
+	</h2>
+
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('content'); ?>
+
+
+<div class="container admin">
+
+	<div class="col-md-3 col-lg-3 admin-left">
+		
+		<div class="row">
+			<div class="col-md-12">
+				<a class="admin-block rounded-top-left rounded-top-right <?php if(!Input::get('section') || Input::get('section') == 'media'): ?> active <?php endif; ?>" data-section="media" href="<?php echo URL::to('admin/media'); ?>">
+					<i class="fa fa-picture-o"></i><span>Hình ảnh</span>
+				</a>
+			</div>
+			<div class="col-md-12">
+				<a class="admin-block <?php if(Input::get('section') == 'users'): ?> active <?php endif; ?>" data-section="users" href="<?php echo URL::to('admin/users'); ?>">
+					<i class="fa fa-user"></i><span>Người dùng (<?php echo count(User::all()); ?>)</span>
+				</a>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<a class="admin-block <?php if(Input::get('section') == 'categories'): ?> active <?php endif; ?>" data-section="categories" href="<?php echo URL::to('admin/categories'); ?>">
+					<i class="fa fa-list"></i><span>Danh mục (<?php echo count(Category::all()); ?>)</span>
+				</a>
+			</div>
+			<div class="col-md-12">
+				<a class="admin-block <?php if(Input::get('section') == 'products'): ?> active <?php endif; ?>" data-section="products" href="<?php echo URL::to('admin/products'); ?>">
+					<i class="fa fa-list"></i><span>Sản phẩm (<?php echo count(Product::all()); ?>)</span>
+				</a>
+			</div>
+
+			<div class="col-md-12">
+				<a class="admin-block <?php if(Input::get('section') == 'pages'): ?> active <?php endif; ?>" data-section="pages" href="<?php echo URL::to('admin/pages'); ?>">
+					<i class="fa fa-file"></i><span>Quản lý trang</span>
+				</a>
+			</div>
+
+			<div class="col-md-12">
+				<a class="admin-block <?php if(Input::get('section') == 'settings'): ?> active <?php endif; ?>" data-section="settings" href="<?php echo URL::to('admin/settings'); ?>">
+					<i class="fa fa-cog"></i><span>Cấu hình chung</span>
+				</a>
+			</div>
+		</div>
+		
+	</div>
+
+	<div id="admin_section" class="col-md-9">
+
+	</div>
+
+	<?php if(Input::get('sort') != '' && Input::get('order') != ''): ?>
+		<input type="hidden" id="sort_order" value="<?php echo '?sort=' . Input::get('sort') . '&order=' . Input::get('order'); ?>" />
+	<?php else: ?>
+		<input type="hidden" id="sort_order" value="" />
+	<?php endif; ?>
+
+</div>
+
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('javascript'); ?>
+
+	<script type="text/javascript">
+
+		$('document').ready(function(){
+			$('a.admin-block').bind('click', function(e) {
+				$('a.admin-block.active').removeClass('active');
+				$(this).addClass('active');
+				//window.location.href = '/?section=comments';
+			  var url = $(this).attr('href');
+			  $('div#admin_section').load(url + $('#sort_order').val()); // load the html response into a DOM element
+			  e.preventDefault(); // stop the browser from following the link
+			});
+
+			$('a.admin-block.active').trigger('click');
+		});
+
+	</script>
+
+<?php $__env->stopSection(); ?>
+
+
+<?php echo $__env->make('layouts.admin', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

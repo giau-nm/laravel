@@ -1,0 +1,4 @@
+﻿@extends('layouts.master')
+
+<?php $__env->startSection('content'); ?>2
+<?php $__env->stopSection(); ?>
