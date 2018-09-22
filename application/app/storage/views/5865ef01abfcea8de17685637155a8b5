@@ -1,5 +1,0 @@
-﻿@extends('layouts.master')
-
-<?php $__env->startSection('content'); ?>33
-
-<?php $__env->stopSection(); ?>
