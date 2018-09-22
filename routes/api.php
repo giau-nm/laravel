@@ -13,5 +13,4 @@ use Illuminate\Http\Request;
 |
 */
 
-// Public API for register/signin
-Route::post('post/search', 'SearchController@search');
+Route::post('/search', 'TrackerController@store');

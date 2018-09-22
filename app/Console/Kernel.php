@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Console\Commands\CreateDatabaseCommand;
+use App\Console\Commands\SetupDatabaseTestCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -13,7 +15,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        CreateDatabaseCommand::class,
+        SetupDatabaseTestCommand::class,
+        Commands\EmailExpiredRequest::class
     ];
 
     /**
@@ -24,8 +28,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('email:expired-request')
+                 ->dailyAt('7:30');
     }
 
     /**

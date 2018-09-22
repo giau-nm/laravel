@@ -1,9 +1,9 @@
 {
-  "name": "ADM project Altplus",
+  "name": "search",
   "description": "Install package javascript",
   "main": "",
   "license": "MIT",
-  "homepage": "http://altplus.com.vn",
+  "homepage": "http://google-search.esy.es/public/",
   "private": true,
   "ignore": [
     "**/.*",

@@ -3,7 +3,11 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Validator;
+use App\Models\Request;
+use App\Models\Device;
+use App\Observers\RequestObserver;
+use App\Observers\DeviceObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,14 +18,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Relation::morphMap([
-            'likepost' => 'App\Models\Like',
-            'likecomment' => 'App\Models\Like',
-            'comment' => 'App\Models\Comment',
-            'repliedcomment' => 'App\Models\Comment',
-            'firstpost' => 'App\Models\Post',
-            'post' => 'App\Models\Post',
-        ]);
+        Validator::extend('max_date_request', 'App\Http\Validators\CustomValidator@maxDateRequest');
+        Validator::replacer('max_date_request', function ($message, $attribute, $rule, $parameters) {
+            $requestData = $this->app->request->all();
+            $message = str_replace(':start_date', $requestData[$parameters[0]], $message);
+
+            return str_replace(':max_date', $parameters[1], $message);
+        });
+
+        Request::observe(RequestObserver::class);
+        Device::observe(DeviceObserver::class);
     }
 
     /**
@@ -31,6 +37,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->register(\L5Swagger\L5SwaggerServiceProvider::class);
+        //
     }
 }

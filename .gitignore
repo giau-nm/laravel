@@ -4,12 +4,12 @@
 /storage/*.key
 /vendor
 /.idea
+/.vscode
 /.vagrant
 Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+composer.phar
 .env
-nbproject
-storage/api-docs/
-
+composer.lock
