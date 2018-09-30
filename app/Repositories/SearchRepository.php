@@ -127,7 +127,7 @@ class SearchRepository  extends BaseRepository
 
     public function createSearch($request)
     {
-        if (is_null($request->id) || is_null($request->search_str)) return false;
+        if (is_null($request->user_id) || is_null($request->search_str)) return false;
 
         $searchModel = new Search;
 
