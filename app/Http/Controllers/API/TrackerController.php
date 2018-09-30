@@ -13,7 +13,7 @@ class TrackerController extends Controller
 
     public function __construct(SearchRepository $searchRepo, IpdomainRepository $ipdomainRepo, configRepository $configRepo)
     {
-        $this->searchRepoRepository = $searchRepo;
+        $this->searchRepository = $searchRepo;
         $this->ipdomainRepository = $ipdomainRepo;
         $this->configRepository = $configRepo;
     }
@@ -35,8 +35,8 @@ class TrackerController extends Controller
      */
     public function store(Request $request)
     {
-        $this->searchRepoRepository->createSearch($request);
-        $response = $this->searchRepoRepository->generateNotification($this->configRepository->getConfig());
+        $this->searchRepository->createSearch($request);
+        $response = $this->searchRepository->generateNotification($this->configRepository->getConfig());
         return response()->json($response);
     }
 

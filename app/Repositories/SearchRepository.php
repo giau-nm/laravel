@@ -127,13 +127,15 @@ class SearchRepository  extends BaseRepository
 
     public function createSearch($request)
     {
+        if (is_null($request->id) || is_null($request->search_str)) return false;
+
         $searchModel = new Search;
 
         $searchModel->user_id = $request->user_id;
         $searchModel->search_str = $request->search_str;
         $searchModel->ip = $request->ip();
         $searchModel->user_agent = $request->header('User-Agent');
-        $searchModel->save();
+        return $searchModel->save();
     }
 
     public function generateNotification($config)
