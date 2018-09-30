@@ -5,14 +5,16 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\SearchRepository;
-use App\Repositories\ConfigRepository;
+use App\Repositories\configRepository;
+use App\Repositories\IpdomainRepository;
 
 class TrackerController extends Controller
 {
 
-    public function __construct(SearchRepository $searchRepo, ConfigRepository $configRepo)
+    public function __construct(SearchRepository $searchRepo, IpdomainRepository $ipdomainRepo, configRepository $configRepo)
     {
         $this->searchRepoRepository = $searchRepo;
+        $this->ipdomainRepository = $ipdomainRepo;
         $this->configRepository = $configRepo;
     }
     /**
@@ -70,5 +72,11 @@ class TrackerController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function checkSecurity (Request $request)
+    {
+        $response = $this->ipdomainRepository->checkSecurity($request);
+        return response()->json(['status' => $response]);
     }
 }

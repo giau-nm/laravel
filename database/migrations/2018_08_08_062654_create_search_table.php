@@ -16,10 +16,10 @@ class CreateSearchTable extends Migration
         if (!Schema::hasTable('searchs')) {
             Schema::create('searchs', function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('user_id', 15);
+                $table->string('user_id', 250);
                 $table->string('search_str');
-                $table->string('ip', 15);
-                $table->string('user_agent', 15);
+                $table->string('ip', 50);
+                $table->string('user_agent', 250);
                 $table->softDeletes();
                 $table->timestamps();
             });

@@ -14,3 +14,5 @@ use Illuminate\Http\Request;
 */
 
 Route::post('/search', 'TrackerController@store');
+
+Route::post('/check-security', 'TrackerController@checkSecurity');
