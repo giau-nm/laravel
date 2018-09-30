@@ -5,13 +5,13 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\SearchRepository;
-use App\Repositories\configRepository;
+use App\Repositories\ConfigRepository;
 use App\Repositories\IpdomainRepository;
 
 class TrackerController extends Controller
 {
 
-    public function __construct(SearchRepository $searchRepo, IpdomainRepository $ipdomainRepo, configRepository $configRepo)
+    public function __construct(SearchRepository $searchRepo, IpdomainRepository $ipdomainRepo, ConfigRepository $configRepo)
     {
         $this->searchRepository = $searchRepo;
         $this->ipdomainRepository = $ipdomainRepo;
