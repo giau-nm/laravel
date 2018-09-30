@@ -140,11 +140,11 @@ class SearchRepository  extends BaseRepository
 
     public function generateNotification($config)
     {
-        if ($config->is_show_nf) return ['isShowNotification' => false];
+        if (!$config->is_show_nf) return ['isShowNotification' => false];
 
         if ($config->style_notification === CONFIG_STYLE_NOTIFICATION_BASIC) {
             return [
-                'isShowNotification' => false,
+                'isShowNotification' => true,
                 'notificationData' => [
                     'type' => 'basic',
                     'iconUrl' => url('/images/icons/icon_test.jpg'),
