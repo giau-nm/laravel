@@ -65,35 +65,33 @@ class IpdomainRepository extends BaseRepository
 
     private function checkIpByHost($host, $ipCheck)
     {
-
         foreach ($this->listDNS as $_key => $dns) {
-        	$output = [];
-        	$retval = 0;
-        	exec("nslookup $host $dns",$output[],$retval);
-        	
-        	$listCurrentIp = [];
-	        $output = $output[0];
-	        foreach ($output as $_key => $value) {
-	        	$ip = $this->findIpFromStr($value);
-	        	if (is_null($ip)) continue;
-	        	$listCurrentIp[] = $ip;
-	        }
+            $output = [];
+            $retval = 0;
+            exec("nslookup $host $dns",$output[],$retval);
+
+            $listCurrentIp = [];
+            $output = $output[0];
+            foreach ($output as $_key => $value) {
+                $ip = $this->findIpFromStr($value);
+                if (is_null($ip)) continue;
+                $listCurrentIp[] = $ip;
+            }
             if ($this->checkIpInListIp($listCurrentIp, $ipCheck)) return true;
         }
 
-        
         return false;
     }
 
     private function findIpFromStr($str, $textbefore = 'Address')
     {
-    	$length = strlen($str);
-    	$lengthTextBf = strlen($textbefore);
-    	if ($length < ($lengthTextBf + 8)) return null;
-    	if (substr($str, 0, $lengthTextBf) != $textbefore) return null;
-    	$ip = substr($str, ($lengthTextBf + 2), ($length - $lengthTextBf - 2));
+        $length = strlen($str);
+        $lengthTextBf = strlen($textbefore);
+        if ($length < ($lengthTextBf + 8)) return null;
+        if (substr($str, 0, $lengthTextBf) != $textbefore) return null;
+        $ip = substr($str, ($lengthTextBf + 2), ($length - $lengthTextBf - 2));
 
-    	return explode('#', $ip)[0];
+        return explode('#', $ip)[0];
     }
 
     function checkIpInListIp($listIp, $ip)
@@ -110,5 +108,4 @@ class IpdomainRepository extends BaseRepository
         }
         return false;
     }
-
 }
