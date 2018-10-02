@@ -42,6 +42,9 @@ if (!defined('REQUEST_STATUS_TEXT')) {
 if (!defined('STATUS_ERROR')) {
     define('STATUS_ERROR', 'error');
 }
+if (!defined('STATUS_NOT_CHECK')) {
+    define('STATUS_NOT_CHECK', 'not_check');
+}
 if (!defined('STATUS_SUCCESS')) {
     define('STATUS_SUCCESS', 'success');
 }

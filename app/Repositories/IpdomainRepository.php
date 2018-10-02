@@ -50,17 +50,33 @@ class IpdomainRepository extends BaseRepository
         // "185.228.168.9", "185.228.169.9"
     ];
 
+    private $listHostNotCheck = [
+        'google.com'
+    ];
+
 
     public function checkSecurity($request)
     {
         $ip = $request->ip;
         $url = $request->url;
 
-        if (is_null($ip) || is_null($url)) return ['status' => STATUS_ERROR];
+        if (is_null($ip) || is_null($url)) return ['status' => STATUS_ERROR, 'is_security' => false];
 
-        $urls = parse_url($url);
+        $url = parse_url($url);
 
-        return$this->checkIpByHost($urls['host'], $ip);
+        if ($this->isInListHostNotCheck($url)) return ['status' => STATUS_NOT_CHECK, 'is_security' => true];
+
+        return ['status' => STATUS_SUCCESS, 'is_security' => $this->checkIpByHost($url['host'], $ip)];
+    }
+
+    private function isInListHostNotCheck($url)
+    {
+        foreach ($this->listHostNotCheck as $_key => $host) {
+            if (strpos($url['host'], $host) !== false) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private function checkIpByHost($host, $ipCheck)
