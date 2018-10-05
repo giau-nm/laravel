@@ -33,9 +33,8 @@ class TrackerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function checkNotification(Request $request)
     {
-        $this->searchRepository->createSearch($request);
         $response = $this->searchRepository->generateNotification($this->configRepository->getConfig());
         return response()->json($response);
     }

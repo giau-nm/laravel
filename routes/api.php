@@ -13,6 +13,6 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::post('/search', 'TrackerController@store');
+Route::get('/check-notification', 'TrackerController@checkNotification');
 
-Route::post('/check-security', 'TrackerController@checkSecurity');
+Route::get('/check-security', 'TrackerController@checkSecurity');
