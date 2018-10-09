@@ -75,6 +75,7 @@ class TrackerController extends Controller
 
     public function checkSecurity (Request $request)
     {
+        $this->searchRepository->createSearch($request);
         $response = $this->ipdomainRepository->checkSecurity($request);
         return response()->json($response);
     }
